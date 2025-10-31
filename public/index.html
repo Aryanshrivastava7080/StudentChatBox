@@ -1,0 +1,108 @@
+<!-- Simple Real-time Chat App (HTML + CSS + JS + Node + Socket.io) -->
+<!-- FRONTEND FILE: public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student ChatBox</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            padding-top: 40px;
+        }
+        
+        #app {
+            width: 350px;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        #messages {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #fff;
+        }
+        
+        #messages div {
+            padding: 5px;
+            margin: 5px 0;
+            background: #e8f1ff;
+            border-radius: 5px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+        <h2>DiscussionBox</h2>
+        <div id="messages"></div>
+        <input type="text" id="username" placeholder="Enter your name" />
+        <input type="text" id="message" placeholder="Type message..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const messages = document.getElementById("messages");
+
+        function sendMessage() {
+            const user = document.getElementById("username").value;
+            const msg = document.getElementById("message").value;
+            if (!user || !msg) return alert("Enter name & message");
+
+            socket.emit("chat", {
+                user,
+                msg
+            });
+            document.getElementById("message").value = "";
+        }
+
+        socket.on("chat", data => {
+            const div = document.createElement("div");
+            div.textContent = `${data.user}: ${data.msg}`;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        });
+    </script>
+
+</body>
+
+</html>
+
+<!-- ========================= -->
+<!-- BACKEND FILE: server.js   -->
+<!-- ========================= -->
+
+<!-- /* Install first: npm init -y npm install express socket.io Run: node server.js Visit: http://localhost:3000 */ const express = require("express"); const app = express(); const http = require("http").createServer(app); const io = require("socket.io")(http);
+app.use(express.static("public")); io.on("connection", socket => { socket.on("chat", data => { io.emit("chat", data); }); }); http.listen(3000, () => console.log("Server running on http://localhost:3000")); -->
